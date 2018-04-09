@@ -267,6 +267,60 @@ void FullSystem::printResult(std::string file)
 	myfile.close();
 }
 
+	void FullSystem::printHessian(std::string file)
+	{
+		//boost::unique_lock<boost::mutex> lock(mapMutex);
+		//boost::unique_lock<boost::mutex> crlock(shellPoseMutex);
+
+		std::ofstream myfile;
+		myfile.open (file.c_str());
+		myfile << std::setprecision(15);
+
+		for(FrameHessian* f : frameHessians)
+		{
+			for(PointHessian* p : f->pointHessians)
+            {
+                myfile << "u=" << p->u <<
+					" v= " << p->v <<
+                    " idepth= " << p->idepth_scaled << "\n";
+            }
+
+		}
+		myfile.close();
+	}
+
+void FullSystem::printPC(int vertexBufferNumPoints, Vec3f* tmpVertexBuffer)
+    {
+       // if (vertexBufferNumPoints != 0) {
+            //std::ofstream myfile ("filename.c_str()", std::ios::out | std::ios::app | std::ios::binary);
+		std::ofstream myfile ("PointCloudv3Matlab.txt", std::ios::out | std::ios::app | std::ios::binary);
+		if (myfile.is_open()) {
+			//myfile << vertexBufferNumPoints <<
+				   //" " << tmpVertexBuffer[vertexBufferNumPoints][0] <<
+				   //" " << tmpVertexBuffer[vertexBufferNumPoints][1] <<
+				   //" " << tmpVertexBuffer[vertexBufferNumPoints][2] << "\n";
+			myfile << tmpVertexBuffer[vertexBufferNumPoints][0] <<
+				   " " << tmpVertexBuffer[vertexBufferNumPoints][1] <<
+				   " " << tmpVertexBuffer[vertexBufferNumPoints][2] << "\n";
+		myfile.close();
+		}
+        //}
+        //else {
+           //// std::string filename = "PointCloud" + KF + ".txt" ;
+            //std::string filename = "PointCloud.txt" ;
+            //std::ofstream myfile;
+            //myfile.open(filename.c_str());
+
+            //myfile << vertexBufferNumPoints <<
+                   //" " << tmpVertexBuffer[vertexBufferNumPoints][0] <<
+                   //" " << tmpVertexBuffer[vertexBufferNumPoints][1] <<
+                   //" " << tmpVertexBuffer[vertexBufferNumPoints][2] << "\n";
+
+			//myfile.close();
+        //}
+        
+    }
+
 
 Vec4 FullSystem::trackNewCoarse(FrameHessian* fh)
 {

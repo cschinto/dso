@@ -146,6 +146,10 @@ public:
 
 	void printResult(std::string file);
 
+	void printHessian(std::string file);
+
+	static void printPC(int vertexBufferNumPoints, Vec3f* tmpVertexBuffer);
+
 	void debugPlot(std::string name);
 
 	void printFrameLifetimes();

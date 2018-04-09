@@ -35,7 +35,7 @@
 #include "FullSystem/HessianBlocks.h"
 #include "FullSystem/ImmaturePoint.h"
 #include "util/FrameShell.h"
-
+#include "FullSystem/FullSystem.h"
 
 
 namespace dso
@@ -285,6 +285,10 @@ bool KeyFrameDisplay::refreshPC(bool canRefresh, float scaledTH, float absTH, in
 				tmpColorBuffer[vertexBufferNumPoints][1] = originalInputSparse[i].color[pnt];
 				tmpColorBuffer[vertexBufferNumPoints][2] = originalInputSparse[i].color[pnt];
 			}
+			
+			// Print the PC
+            FullSystem::printPC(vertexBufferNumPoints, tmpVertexBuffer);
+            
 			vertexBufferNumPoints++;
 
 
@@ -311,12 +315,211 @@ bool KeyFrameDisplay::refreshPC(bool canRefresh, float scaledTH, float absTH, in
 	bufferValid=true;
 	delete[] tmpColorBuffer;
 	delete[] tmpVertexBuffer;
-
+	
 
 	return true;
 }
 
+// Save PC in txt file
+bool KeyFrameDisplay::savePC(bool canRefresh, float scaledTH, float absTH, int mode, float minBS, int sparsity, int KFid)
+{
+	std::string directory = "/home/turtlebot/Desktop/dso/build/PC/";
+	std::string fileName = "PointCloudKF_";
+	std::string fileType = ".txt";
+	std::stringstream ss;
+	ss << KFid;
 
+	std::string full_filename = directory + fileName + ss.str() + fileType;
+	std::ofstream writer;
+	std::cout << "filename: " << full_filename << std::endl;
+
+	if(canRefresh){
+		needRefresh = needRefresh ||
+			my_scaledTH != scaledTH ||
+			my_absTH != absTH ||
+			my_displayMode != mode ||
+			my_minRelBS != minBS ||
+			my_sparsifyFactor != sparsity;
+	}
+
+	if(!needRefresh) {
+		//std::cout << "Warning: I exit here: if(!needRefresh)" << std::endl;
+		//int c = getchar();
+		return false;
+	}
+	needRefresh=false;
+
+	my_scaledTH = scaledTH;
+	my_absTH = absTH;
+	my_displayMode = mode;
+	my_minRelBS = minBS;
+	my_sparsifyFactor = sparsity;
+
+
+	// if there are no vertices, done!
+	if(numSparsePoints == 0){
+		//std::cout << "Warning: I exit here: if(numSparsePoints == 0)" << std::endl;
+		//int c = getchar();
+		return false;
+	}
+
+	// make data
+	Vec3f* tmpVertexBuffer = new Vec3f[numSparsePoints*patternNum];
+	Vec3b* tmpColorBuffer = new Vec3b[numSparsePoints*patternNum];
+	int vertexBufferNumPoints=0;
+
+	std::cout << "numSparsePoints: " << numSparsePoints << std::endl;
+
+	writer.open(full_filename.c_str());
+	for(int i=0;i<numSparsePoints;i++){
+		/* display modes:
+		 * my_displayMode==0 - all pts, color-coded
+		 * my_displayMode==1 - normal points
+		 * my_displayMode==2 - active only
+		 * my_displayMode==3 - nothing
+		 */
+
+		if(my_displayMode==1 && originalInputSparse[i].status != 1 && originalInputSparse[i].status!= 2){
+			std::cout << "Warning: I exit here: my_displayMode==1 && originalInputSparse[i].status != 1 && originalInputSparse[i].status!= 2" << std::endl;
+			//int c = getchar();
+			continue;
+		}
+		if(my_displayMode==2 && originalInputSparse[i].status != 1) {
+			std::cout << "Warning: I exit here: my_displayMode==2 && originalInputSparse[i].status != 1" << std::endl;
+			//int c = getchar();
+			continue;
+		}
+		if(my_displayMode>2) {
+			std::cout << "Warning: I exit here: my_displayMode>2" << std::endl;
+			//int c = getchar();
+			continue;
+		}
+
+		if(originalInputSparse[i].idpeth < 0) {
+			continue;
+		}
+
+
+		float depth = 1.0f / originalInputSparse[i].idpeth;
+		float depth4 = depth*depth; depth4*= depth4;
+		float var = (1.0f / (originalInputSparse[i].idepth_hessian+0.01));
+
+		if(var * depth4 > my_scaledTH){
+			std::cout << "Warning: I exit here: my_displayMode>2" << std::endl;
+			//int c = getchar();
+			continue;
+		}
+
+		if(var > my_absTH){
+			std::cout << "Warning: I exit here: var > my_absTH" << std::endl;
+			//int c = getchar();
+			continue;
+		}
+
+		if(originalInputSparse[i].relObsBaseline < my_minRelBS){
+			std::cout << "Warning: I exit here: originalInputSparse[i].relObsBaseline < my_minRelBS" << std::endl;
+			//int c = getchar();
+			continue;
+		}
+
+
+		for(int pnt=0;pnt<patternNum;pnt++)
+		{
+
+			if(my_sparsifyFactor > 1 && rand()%my_sparsifyFactor != 0) {
+				std::cout << "Warning: I exit here: my_sparsifyFactor > 1 && rand()%my_sparsifyFactor != 0" << std::endl;
+				//int c = getchar();
+				continue;
+			}
+			int dx = patternP[pnt][0];
+			int dy = patternP[pnt][1];
+
+			tmpVertexBuffer[vertexBufferNumPoints][0] = ((originalInputSparse[i].u+dx)*fxi + cxi) * depth;
+			tmpVertexBuffer[vertexBufferNumPoints][1] = ((originalInputSparse[i].v+dy)*fyi + cyi) * depth;
+			tmpVertexBuffer[vertexBufferNumPoints][2] = depth*(1 + 2*fxi * (rand()/(float)RAND_MAX-0.5f));
+
+
+
+			if(my_displayMode==0)
+			{
+				if(originalInputSparse[i].status==0)
+				{
+					tmpColorBuffer[vertexBufferNumPoints][0] = 0;
+					tmpColorBuffer[vertexBufferNumPoints][1] = 255;
+					tmpColorBuffer[vertexBufferNumPoints][2] = 255;
+				}
+				else if(originalInputSparse[i].status==1)
+				{
+					tmpColorBuffer[vertexBufferNumPoints][0] = 0;
+					tmpColorBuffer[vertexBufferNumPoints][1] = 255;
+					tmpColorBuffer[vertexBufferNumPoints][2] = 0;
+				}
+				else if(originalInputSparse[i].status==2)
+				{
+					tmpColorBuffer[vertexBufferNumPoints][0] = 0;
+					tmpColorBuffer[vertexBufferNumPoints][1] = 0;
+					tmpColorBuffer[vertexBufferNumPoints][2] = 255;
+				}
+				else if(originalInputSparse[i].status==3)
+				{
+					tmpColorBuffer[vertexBufferNumPoints][0] = 255;
+					tmpColorBuffer[vertexBufferNumPoints][1] = 0;
+					tmpColorBuffer[vertexBufferNumPoints][2] = 0;
+				}
+				else
+				{
+					tmpColorBuffer[vertexBufferNumPoints][0] = 255;
+					tmpColorBuffer[vertexBufferNumPoints][1] = 255;
+					tmpColorBuffer[vertexBufferNumPoints][2] = 255;
+				}
+
+			}
+			else
+			{
+				tmpColorBuffer[vertexBufferNumPoints][0] = originalInputSparse[i].color[pnt];
+				tmpColorBuffer[vertexBufferNumPoints][1] = originalInputSparse[i].color[pnt];
+				tmpColorBuffer[vertexBufferNumPoints][2] = originalInputSparse[i].color[pnt];
+			}
+
+			// Print the PC
+			//FullSystem::printPC(vertexBufferNumPoints, tmpVertexBuffer);
+			writer << tmpVertexBuffer[vertexBufferNumPoints][0] << 
+				" " << tmpVertexBuffer[vertexBufferNumPoints][1] <<
+				" " << tmpVertexBuffer[vertexBufferNumPoints][2] << "\n";
+
+			vertexBufferNumPoints++;
+
+
+			assert(vertexBufferNumPoints <= numSparsePoints*patternNum);
+		}
+	}
+
+	if(vertexBufferNumPoints==0)
+	{
+		delete[] tmpColorBuffer;
+		delete[] tmpVertexBuffer;
+		std::cout << "Warning: I exit here: vertexBufferNumPoints==0" << std::endl;
+		//int c = getchar();
+		writer.close();
+		return true;
+	}
+
+	numGLBufferGoodPoints = vertexBufferNumPoints;
+	if(numGLBufferGoodPoints > numGLBufferPoints)
+	{
+		numGLBufferPoints = vertexBufferNumPoints*1.3;
+		vertexBuffer.Reinitialise(pangolin::GlArrayBuffer, numGLBufferPoints, GL_FLOAT, 3, GL_DYNAMIC_DRAW );
+		colorBuffer.Reinitialise(pangolin::GlArrayBuffer, numGLBufferPoints, GL_UNSIGNED_BYTE, 3, GL_DYNAMIC_DRAW );
+	}
+	vertexBuffer.Upload(tmpVertexBuffer, sizeof(float)*3*numGLBufferGoodPoints, 0);
+	colorBuffer.Upload(tmpColorBuffer, sizeof(unsigned char)*3*numGLBufferGoodPoints, 0);
+	bufferValid=true;
+	delete[] tmpColorBuffer;
+	delete[] tmpVertexBuffer;
+
+	writer.close();
+	return true;
+}
 
 void KeyFrameDisplay::drawCam(float lineWidth, float* color, float sizeFactor)
 {

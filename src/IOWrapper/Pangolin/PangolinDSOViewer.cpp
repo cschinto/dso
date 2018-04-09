@@ -176,14 +176,18 @@ void PangolinDSOViewer::run()
 			boost::unique_lock<boost::mutex> lk3d(model3DMutex);
 			//pangolin::glDrawColouredCube();
 			int refreshed=0;
+			int refreshedsavePC = 0 ;
 			for(KeyFrameDisplay* fh : keyframes)
 			{
 				float blue[3] = {0,0,1};
 				if(this->settings_showKFCameras) fh->drawCam(1,blue,0.1);
 
 
-				refreshed += (int)(fh->refreshPC(refreshed < 10, this->settings_scaledVarTH, this->settings_absVarTH,
-						this->settings_pointCloudMode, this->settings_minRelBS, this->settings_sparsity));
+				//refreshed += (int)(fh->refreshPC(refreshed < 10, this->settings_scaledVarTH, this->settings_absVarTH,
+				//		this->settings_pointCloudMode, this->settings_minRelBS, this->settings_sparsity));
+				int KFid = fh->id ;
+				refreshed += (int) (fh->savePC(refreshed < 10, this->settings_scaledVarTH, this->settings_absVarTH,
+                        this->settings_pointCloudMode, this->settings_minRelBS, this->settings_sparsity, KFid));
 				fh->drawPC(1);
 			}
 			if(this->settings_showCurrentCamera) currentCam->drawCam(2,0,0.2);
