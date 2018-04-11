@@ -176,7 +176,6 @@ void PangolinDSOViewer::run()
 			boost::unique_lock<boost::mutex> lk3d(model3DMutex);
 			//pangolin::glDrawColouredCube();
 			int refreshed=0;
-			int refreshedsavePC = 0 ;
 			for(KeyFrameDisplay* fh : keyframes)
 			{
 				float blue[3] = {0,0,1};

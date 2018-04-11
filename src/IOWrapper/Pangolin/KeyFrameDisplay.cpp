@@ -323,7 +323,8 @@ bool KeyFrameDisplay::refreshPC(bool canRefresh, float scaledTH, float absTH, in
 // Save PC in txt file
 bool KeyFrameDisplay::savePC(bool canRefresh, float scaledTH, float absTH, int mode, float minBS, int sparsity, int KFid)
 {
-	std::string directory = "/home/turtlebot/Desktop/dso/build/PC/";
+	//std::string directory = "/home/turtlebot/Desktop/dso/build/PC/";
+	std::string directory = "/Users/chloeschintowski/dso/build/PC/";
 	std::string fileName = "PointCloudKF_";
 	std::string fileType = ".txt";
 	std::stringstream ss;
@@ -331,7 +332,7 @@ bool KeyFrameDisplay::savePC(bool canRefresh, float scaledTH, float absTH, int m
 
 	std::string full_filename = directory + fileName + ss.str() + fileType;
 	std::ofstream writer;
-	std::cout << "filename: " << full_filename << std::endl;
+	//std::cout << "filename: " << full_filename << std::endl;
 
 	if(canRefresh){
 		needRefresh = needRefresh ||
@@ -380,17 +381,17 @@ bool KeyFrameDisplay::savePC(bool canRefresh, float scaledTH, float absTH, int m
 		 */
 
 		if(my_displayMode==1 && originalInputSparse[i].status != 1 && originalInputSparse[i].status!= 2){
-			std::cout << "Warning: I exit here: my_displayMode==1 && originalInputSparse[i].status != 1 && originalInputSparse[i].status!= 2" << std::endl;
+			//std::cout << "Warning: I exit here: my_displayMode==1 && originalInputSparse[i].status != 1 && originalInputSparse[i].status!= 2" << std::endl;
 			//int c = getchar();
 			continue;
 		}
 		if(my_displayMode==2 && originalInputSparse[i].status != 1) {
-			std::cout << "Warning: I exit here: my_displayMode==2 && originalInputSparse[i].status != 1" << std::endl;
+			//std::cout << "Warning: I exit here: my_displayMode==2 && originalInputSparse[i].status != 1" << std::endl;
 			//int c = getchar();
 			continue;
 		}
 		if(my_displayMode>2) {
-			std::cout << "Warning: I exit here: my_displayMode>2" << std::endl;
+			//std::cout << "Warning: I exit here: my_displayMode>2" << std::endl;
 			//int c = getchar();
 			continue;
 		}
@@ -405,19 +406,19 @@ bool KeyFrameDisplay::savePC(bool canRefresh, float scaledTH, float absTH, int m
 		float var = (1.0f / (originalInputSparse[i].idepth_hessian+0.01));
 
 		if(var * depth4 > my_scaledTH){
-			std::cout << "Warning: I exit here: my_displayMode>2" << std::endl;
+			//std::cout << "Warning: I exit here: my_displayMode>2" << std::endl;
 			//int c = getchar();
 			continue;
 		}
 
 		if(var > my_absTH){
-			std::cout << "Warning: I exit here: var > my_absTH" << std::endl;
+			//std::cout << "Warning: I exit here: var > my_absTH" << std::endl;
 			//int c = getchar();
 			continue;
 		}
 
 		if(originalInputSparse[i].relObsBaseline < my_minRelBS){
-			std::cout << "Warning: I exit here: originalInputSparse[i].relObsBaseline < my_minRelBS" << std::endl;
+			//std::cout << "Warning: I exit here: originalInputSparse[i].relObsBaseline < my_minRelBS" << std::endl;
 			//int c = getchar();
 			continue;
 		}
@@ -427,7 +428,7 @@ bool KeyFrameDisplay::savePC(bool canRefresh, float scaledTH, float absTH, int m
 		{
 
 			if(my_sparsifyFactor > 1 && rand()%my_sparsifyFactor != 0) {
-				std::cout << "Warning: I exit here: my_sparsifyFactor > 1 && rand()%my_sparsifyFactor != 0" << std::endl;
+				//std::cout << "Warning: I exit here: my_sparsifyFactor > 1 && rand()%my_sparsifyFactor != 0" << std::endl;
 				//int c = getchar();
 				continue;
 			}
@@ -483,7 +484,7 @@ bool KeyFrameDisplay::savePC(bool canRefresh, float scaledTH, float absTH, int m
 
 			// Print the PC
 			//FullSystem::printPC(vertexBufferNumPoints, tmpVertexBuffer);
-			writer << tmpVertexBuffer[vertexBufferNumPoints][0] << 
+			writer << tmpVertexBuffer[vertexBufferNumPoints][0] <<
 				" " << tmpVertexBuffer[vertexBufferNumPoints][1] <<
 				" " << tmpVertexBuffer[vertexBufferNumPoints][2] << "\n";
 
@@ -498,7 +499,7 @@ bool KeyFrameDisplay::savePC(bool canRefresh, float scaledTH, float absTH, int m
 	{
 		delete[] tmpColorBuffer;
 		delete[] tmpVertexBuffer;
-		std::cout << "Warning: I exit here: vertexBufferNumPoints==0" << std::endl;
+		//std::cout << "Warning: I exit here: vertexBufferNumPoints==0" << std::endl;
 		//int c = getchar();
 		writer.close();
 		return true;

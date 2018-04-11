@@ -257,7 +257,8 @@ void FullSystem::printResult(std::string file)
 
 		if(setting_onlyLogKFPoses && s->marginalizedAt == s->id) continue;
 
-		myfile << s->timestamp <<
+		myfile << s->id <<
+               " "<< s->timestamp <<
 			" " << s->camToWorld.translation().transpose()<<
 			" " << s->camToWorld.so3().unit_quaternion().x()<<
 			" " << s->camToWorld.so3().unit_quaternion().y()<<
@@ -291,9 +292,7 @@ void FullSystem::printResult(std::string file)
 
 void FullSystem::printPC(int vertexBufferNumPoints, Vec3f* tmpVertexBuffer)
     {
-       // if (vertexBufferNumPoints != 0) {
-            //std::ofstream myfile ("filename.c_str()", std::ios::out | std::ios::app | std::ios::binary);
-		std::ofstream myfile ("PointCloudv3Matlab.txt", std::ios::out | std::ios::app | std::ios::binary);
+        std::ofstream myfile ("PointCloudRefreshedPC.txt", std::ios::out | std::ios::app | std::ios::binary);
 		if (myfile.is_open()) {
 			//myfile << vertexBufferNumPoints <<
 				   //" " << tmpVertexBuffer[vertexBufferNumPoints][0] <<
@@ -304,21 +303,6 @@ void FullSystem::printPC(int vertexBufferNumPoints, Vec3f* tmpVertexBuffer)
 				   " " << tmpVertexBuffer[vertexBufferNumPoints][2] << "\n";
 		myfile.close();
 		}
-        //}
-        //else {
-           //// std::string filename = "PointCloud" + KF + ".txt" ;
-            //std::string filename = "PointCloud.txt" ;
-            //std::ofstream myfile;
-            //myfile.open(filename.c_str());
-
-            //myfile << vertexBufferNumPoints <<
-                   //" " << tmpVertexBuffer[vertexBufferNumPoints][0] <<
-                   //" " << tmpVertexBuffer[vertexBufferNumPoints][1] <<
-                   //" " << tmpVertexBuffer[vertexBufferNumPoints][2] << "\n";
-
-			//myfile.close();
-        //}
-        
     }
 
 
