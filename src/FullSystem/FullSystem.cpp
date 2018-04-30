@@ -246,8 +246,8 @@ void FullSystem::printResult(std::string file)
 	boost::unique_lock<boost::mutex> lock(trackMutex);
 	boost::unique_lock<boost::mutex> crlock(shellPoseMutex);
 
-    std::string directory = "/Users/chloeschintowski/dso/ressources/";
-    //std::string directory = "[path]/dso/ressources/";
+
+    std::string directory = "[path]/dso/ressources/";
 
 
     std::string full_filename = directory + file.c_str();
@@ -280,8 +280,7 @@ void FullSystem::printHessian(std::string file)
     //boost::unique_lock<boost::mutex> lock(mapMutex);
     //boost::unique_lock<boost::mutex> crlock(shellPoseMutex);
 
-    std::string directory = "/Users/chloeschintowski/dso/ressources/";
-    //std::string directory = "[path]/dso/ressources/";
+    std::string directory = "[path]/dso/ressources/";
 
 
     std::string full_filename = directory + file.c_str();
@@ -308,8 +307,7 @@ void FullSystem::printHessian(std::string file)
 void FullSystem::printPC(int vertexBufferNumPoints, Vec3f* tmpVertexBuffer)
     {
 
-        std::string directory = "/Users/chloeschintowski/dso/ressources/";
-        //std::string directory = "[path]/dso/ressources/";
+        std::string directory = "[path]/dso/ressources/";
 
         std::string file = "PointCloudRefreshedPC.txt";
         std::string full_filename = directory + file.c_str();
