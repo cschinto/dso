@@ -532,7 +532,7 @@ int main( int argc, char** argv )
 
 
         fullSystem->printResult("result.txt");
-       // fullSystem->printHessian("hessian.txt");
+        fullSystem->printHessian("hessian.txt");
 
         int numFramesProcessed = abs(idsToPlay[0]-idsToPlay.back());
         double numSecondsProcessed = fabs(reader->getTimestamp(idsToPlay[0])-reader->getTimestamp(idsToPlay.back()));

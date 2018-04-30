@@ -241,14 +241,21 @@ void FullSystem::setGammaFunction(float* BInv)
 }
 
 
-
 void FullSystem::printResult(std::string file)
 {
 	boost::unique_lock<boost::mutex> lock(trackMutex);
 	boost::unique_lock<boost::mutex> crlock(shellPoseMutex);
 
+    std::string directory = "/Users/chloeschintowski/dso/ressources/";
+    //std::string directory = "[path]/dso/ressources/";
+
+
+    std::string full_filename = directory + file.c_str();
+    //std::cout << "filename: " << full_filename << std::endl;
+
+
 	std::ofstream myfile;
-	myfile.open (file.c_str());
+	myfile.open (full_filename.c_str());
 	myfile << std::setprecision(15);
 
 	for(FrameShell* s : allFrameHistory)
@@ -268,31 +275,45 @@ void FullSystem::printResult(std::string file)
 	myfile.close();
 }
 
-	void FullSystem::printHessian(std::string file)
-	{
-		//boost::unique_lock<boost::mutex> lock(mapMutex);
-		//boost::unique_lock<boost::mutex> crlock(shellPoseMutex);
+void FullSystem::printHessian(std::string file)
+{
+    //boost::unique_lock<boost::mutex> lock(mapMutex);
+    //boost::unique_lock<boost::mutex> crlock(shellPoseMutex);
 
-		std::ofstream myfile;
-		myfile.open (file.c_str());
-		myfile << std::setprecision(15);
+    std::string directory = "/Users/chloeschintowski/dso/ressources/";
+    //std::string directory = "[path]/dso/ressources/";
 
-		for(FrameHessian* f : frameHessians)
-		{
-			for(PointHessian* p : f->pointHessians)
-            {
-                myfile << "u=" << p->u <<
-					" v= " << p->v <<
-                    " idepth= " << p->idepth_scaled << "\n";
-            }
 
-		}
-		myfile.close();
-	}
+    std::string full_filename = directory + file.c_str();
+    //std::cout << "filename: " << full_filename << std::endl;
+
+
+    std::ofstream myfile;
+    myfile.open (full_filename.c_str());
+    myfile << std::setprecision(15);
+
+    for(FrameHessian* f : frameHessians)
+    {
+        for(PointHessian* p : f->pointHessians)
+        {
+            myfile << "u=" << p->u <<
+                " v= " << p->v <<
+                " idepth= " << p->idepth_scaled << "\n";
+        }
+
+    }
+    myfile.close();
+}
 
 void FullSystem::printPC(int vertexBufferNumPoints, Vec3f* tmpVertexBuffer)
     {
-        std::ofstream myfile ("PointCloudRefreshedPC.txt", std::ios::out | std::ios::app | std::ios::binary);
+
+        std::string directory = "/Users/chloeschintowski/dso/ressources/";
+        //std::string directory = "[path]/dso/ressources/";
+
+        std::string file = "PointCloudRefreshedPC.txt";
+        std::string full_filename = directory + file.c_str();
+        std::ofstream myfile (full_filename.c_str(), std::ios::out | std::ios::app | std::ios::binary);
 		if (myfile.is_open()) {
 			//myfile << vertexBufferNumPoints <<
 				   //" " << tmpVertexBuffer[vertexBufferNumPoints][0] <<

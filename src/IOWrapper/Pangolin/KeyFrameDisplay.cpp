@@ -323,8 +323,9 @@ bool KeyFrameDisplay::refreshPC(bool canRefresh, float scaledTH, float absTH, in
 // Save PC in txt file
 bool KeyFrameDisplay::savePC(bool canRefresh, float scaledTH, float absTH, int mode, float minBS, int sparsity, int KFid)
 {
-	//std::string directory = "/home/turtlebot/Desktop/dso/build/PC/";
-	std::string directory = "/Users/chloeschintowski/dso/build/PC/";
+
+	std::string directory = "/Users/chloeschintowski/dso/ressources/PC/";
+	//std::string directory = "[path]/dso/ressources/PC/";
 	std::string fileName = "PointCloudKF_";
 	std::string fileType = ".txt";
 	std::stringstream ss;

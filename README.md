@@ -1,3 +1,36 @@
+# Mapping Lake using DSO
+
+Special Problem at Georgia Tech under supervision of Professor Cedric Pradalier
+Create 3D map of lake
+
+Personal goal: extract point cloud in txt file and display them on Matlab
+
+### 1. Modifications on DSO
+#### 1.1 FullSystem
+
+printResult : also output id of KF
+PrintHessian : print Hessians coordinates in txt file
+PrintPC : print pointcloud coordinates in txt file. Function used in KeyFrameDisplay::printPC
+
+#### 1.2 KeyFrameDisplay
+
+replaced printPC by savePC
+savePC : output in build/PC each KF has PC coordinates file with KF id in filename
+
+### 2. MATLAB
+
+Get correct orientation of KF to display PC
+Check that PC files match KF id
+From quaternions get orientation
+Display
+
+### 3. Before Running
+
+In KeyFrameDisplay::savePC, indicate directory where PC files will be saved
+Same in FullSystem::printResult, FullSystem::printHessian & FullSystem::printPC
+Remove previous PC files in ressources/PC not all previous files will re-written
+
+
 # DSO: Direct Sparse Odometry
 
 For more information see
